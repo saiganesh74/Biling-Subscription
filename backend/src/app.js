@@ -19,7 +19,7 @@ app.use("/api/v1/tenants/:tenantId/products", productRoutes)
 
 app.use("/api/v1/tenants/:tenantId/products/:productId/plans", planRoutes);
 
-app.use("/api/v1/tenants/:tenantId/customers/:customerId,subscription", subscriptionRoutes)
+app.use("/api/v1/tenants/:tenantId/customers/:customerId/subscriptions", subscriptionRoutes)
 
 
 app.use((err, req, res, next) => {

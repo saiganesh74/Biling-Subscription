@@ -72,7 +72,7 @@ const createSubscription = async (req, res) => {
             const originalDay = currentPeriodStart.getDate();// get date gives the day of the month 
 
             // Move to the first day of the next month
-            currentPeriodEnd.setDate(1);
+            currentPeriodEnd.setDate(1);  // we are setting the date to the 1st so that its easy to traverse to the next month 
             currentPeriodEnd.setMonth(
                 currentPeriodEnd.getMonth() + 1
             );
@@ -80,14 +80,14 @@ const createSubscription = async (req, res) => {
             // Find the last day of the next month
             const lastDayOfNextMonth = new Date(
                 currentPeriodEnd.getFullYear(),
-                currentPeriodEnd.getMonth() + 1,
+                currentPeriodEnd.getMonth() + 1, //here the syntax is new Date(year , nextmonth{currentPeriodEnd+1} , 0) --> this will give us the 0th day of the next month i.e the prev month's last day 
                 0
             ).getDate();
 
             // Use original day if it exists,a
             // otherwise use the last day of the month
             currentPeriodEnd.setDate(
-                Math.min(originalDay, lastDayOfNextMonth)
+                Math.min(originalDay, lastDayOfNextMonth) //We use the minimum fuction sothat the least no of days i.e they re accurate so we are considering them and also to only use the subscription month renewal date 
             );
         }
 
@@ -108,6 +108,22 @@ const createSubscription = async (req, res) => {
                 message: "Invalid billing period"
             });
         }
+
+        //Checking if there is any active subscription with the same plan 
+        const existingSubscrition = await Subscription.findOne({
+            customerId,
+            planId,
+            status: "ACTIVE"
+        });
+
+        if (existingSubscrition) {
+            return res.status(400).json({
+                success: false,
+                message: "Customer already has an active subscription to this plan "
+            })
+        }
+
+
 
         // -----------------------------
         // 6. Create subscription
