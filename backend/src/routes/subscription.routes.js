@@ -5,4 +5,6 @@ const router = express.Router({mergeParams:true});
 
 router.post("/", subscriptionController.createSubscription);
 
+router.post("/:subscriptionId", subscriptionController.cancelSubscription);
+
 module.exports = router;

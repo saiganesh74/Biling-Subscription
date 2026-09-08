@@ -153,6 +153,47 @@ const createSubscription = async (req, res) => {
     }
 };
 
+const cancelSubscription = async (req, res) => {
+    try {
+        const { tenantId, subscriptionId } = req.params;
+
+        //Making sure that the subsc belongs top this tenant 
+
+        const subscription = await Subscription.findOne({
+            _id: subscriptionId,
+            tenantId
+        });
+
+        if (!subscription) {
+            return res.status(404).json({
+                success: false,
+                message: "Subscription not found for this tenant"
+            });
+        }
+        
+        //Checking if the status is not active 
+        if ( subscription.status !== "ACTIVE") {
+            return res.status(404).json({
+                success: false,
+                message: "Only active subscriptions can be cancelled"
+            });
+        };
+        //making the boolean as true in the schema and saving it in cluster back 
+        subscription.cancelAtPeriodEnd = true;
+        await subscription.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Subscription will be cancelled at the end of the current billing period"
+        });
+
+    } catch (e) {
+        throw e;
+    }
+
+}
+
 module.exports = {
-    createSubscription
+    createSubscription,
+    cancelSubscription
 };

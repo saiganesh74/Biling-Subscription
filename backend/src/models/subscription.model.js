@@ -1,39 +1,45 @@
 const mongoose = require("mongoose");
 const subscriptionSchema = new mongoose.Schema({
-    tenantId:{
+    tenantId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Tenant",
         required: true
     },
-    customerId:{
+    customerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Customer",
         required: true
     },
-    planId:{
+    planId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Plan",
         required: true
-    }, 
-
-    status:{
-        type: String,
-        required: true ,
-        enum:["TRAILING","ACTIVE","PAST_DUE","CANCELLED"]
     },
-    startDate:{
+
+    status: {
+        type: String,
+        required: true,
+        enum: ["TRAILING", "ACTIVE", "PAST_DUE", "CANCELLED"]
+    },
+
+    cancelAtPeriodEnd: {
+        type: Boolean,
+        default: false
+    },
+
+    startDate: {
         type: Date,
         required: true,
-    }, 
-    currentPeriodStart:{
+    },
+    currentPeriodStart: {
         type: Date,
         required: true
     },
-    currentPeriodEnd:{
+    currentPeriodEnd: {
         type: Date,
         required: true
     }
-},{timestamps:true}
+}, { timestamps: true }
 )
 
 const Subscription = mongoose.model("Subscription", subscriptionSchema);
